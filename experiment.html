@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Icon Mapping</title>
+  <link rel="stylesheet" href="/Index.css">
+<!-- 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" /> -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+  <link rel="stylesheet" href="Style.css">
+
+  <style>
+    /* Define your custom icon styles */
+
+  </style>
+
+<body>
+
+  <div class="cluster_main_container">
+    <div class="cluster_box">Data Clusters</div>
+    <div id="clusters" class="clusters"></div>
+  </div>
+
+
+</body>
+
+<script src="index.js"></script>
+<script type="module">
+
+  function generateHTML(data, containerClass = '', bgColorClass = '') {
+    let html = `<div class="cl-start-wrap ${containerClass} ${bgColorClass}">`;
+
+    processItems(data);
+    html += '</div>';
+
+    function processItems(items, depth = 1) {
+      html += `<ul class="${containerClass}-level-${depth}">`;
+      for (const [title, content] of Object.entries(items)) {
+        const iconClass = getIconClass(depth);
+        const arrowIconClass = getArrowIconClass(depth);
+
+        html += '<li class="cl-item">';
+        html += '<div class="cl-label-wrap">';
+        html += `<span class="cl-label-title"><i class="fa ${iconClass}"></i> ${title}</span>`;
+        html += `<span class="cl-label-icon ${arrowIconClass}"></span>`;
+        html += '</div>';
+
+        if (Array.isArray(content)) {
+          // Process array content
+          html += '<ul>';
+          content.forEach(entry => {
+            const columnIconClass = getTypeIconClass(entry[1]); // Use type for column icon
+            html += '<li class="cl-item">';
+            html += '<div class="cl-label-wrap">';
+            html += `<span class="cl-label-title"><i class="fa ${columnIconClass}"></i> ${entry[0]}</span>`;
+            html += `<span class="column_space"></span>`;
+            html += '</div>';
+            html += '</li>';
+          });
+          html += '</ul>';
+
+        } else if (typeof content === 'object' && Object.keys(content).length > 0) {
+          // Process nested object content
+          processItems(content, depth + 1);
+        }
+
+        html += '</li>';
+      }
+      html += '</ul>';
+    }
+
+    return html;
+  }
+
+
+  function getIconClass(depth) {
+    if (depth === 1) {
+      return 'fa-snowflake-o'; // Font Awesome database icon class for depth 1
+    } else if (depth === 2) {
+      return 'fa-th-large'; // Font Awesome folder icon class for depth 2
+    } else if (depth === 3) {
+      return 'fa-database'; // Font Awesome file icon class for depth 3
+    } else if (depth === 4) {
+      return 'fa-th-large'; // Font Awesome file icon class for depth 3
+    } else if (depth === 5) {
+      return 'fa-columns'; // Font Awesome file icon class for depth 3
+    } else {
+      return 'fa-question'; // Default icon class if depth is not 1, 2, or 3
+    }
+  }
+
+  function getArrowIconClass(depth) {
+    // Add logic to determine arrow icon class based on depth
+    return `arrow-icon-level-${depth}`;
+  }
+
+  // icons for data types
+  function getTypeIconClass(type) {
+    const typeIcons = {
+      // LOWER CASE
+      // for Date and Time Data Types
+      'date': 'fa-calendar-o',
+      'datetime': 'fa-calendar-o',
+      'timestamp': 'fa-calendar-o',
+      'time': 'fa-calendar-o',
+      'year': 'fa-calendar-o',
+
+      'varchar': 'fa-sort-alpha-asc',
+      'char': 'fa-sort-alpha-asc',
+      'binary': 'fa-sort-alpha-asc',
+      'varbinary': 'fa-sort-alpha-asc',
+      'tinyblob': 'fa-sort-alpha-asc',
+      'tinytext': 'fa-sort-alpha-asc',
+      'text': 'fa-sort-alpha-asc',
+      'blob': 'fa-sort-alpha-asc',
+      'mediumtext': 'fa-sort-alpha-asc',
+      'longtext': 'fa-sort-alpha-asc',
+      'longblob': 'fa-sort-alpha-asc',
+      'enum': 'fa-sort-alpha-asc',
+      'set': 'fa-sort-alpha-asc',
+
+      'bigint': 'fa-sort-numeric-asc',
+      'integer': 'fa-sort-numeric-asc',
+      'number': 'fa-sort-numeric-asc',
+      'float': 'fa-sort-numeric-asc',
+      'decimal': 'fa-sort-numeric-asc',
+      'smallint': 'fa-sort-numeric-asc',
+      'double': 'fa-sort-numeric-asc',
+      'dec': 'fa-sort-numeric-asc',
+      'mediumint': 'fa-sort-numeric-asc',
+      'bool': 'fa-sort-numeric-asc',
+      'boolean': 'fa-sort-numeric-asc',
+      'int': 'fa-sort-numeric-asc',
+
+      // UPPER CASE
+      'DATE': 'fa-calendar-o',
+      'DATETIME': 'fa-calendar-o',
+      'TIMESTAMP': 'fa-calendar-o',
+      'TIME': 'fa-calendar-o',
+      'YEAR': 'fa-calendar-o',
+
+      'VARCHAR': 'fa-sort-alpha-asc',
+      'CHAR': 'fa-sort-alpha-asc',
+      'BINARY': 'fa-sort-alpha-asc',
+      'VARBINARY': 'fa-sort-alpha-asc',
+      'TINYBLOB': 'fa-sort-alpha-asc',
+      'TINYTEXT': 'fa-sort-alpha-asc',
+      'TEXT': 'fa-sort-alpha-asc',
+      'BLOB': 'fa-sort-alpha-asc',
+      'MEDIUMTEXT': 'fa-sort-alpha-asc',
+      'LONGTEXT': 'fa-sort-alpha-asc',
+      'LONGBLOB': 'fa-sort-alpha-asc',
+      'ENUM': 'fa-sort-alpha-asc',
+      'SET': 'fa-sort-alpha-asc',
+
+      'BIGINT': 'fa-sort-numeric-asc',
+      'INTEGER': 'fa-sort-numeric-asc',
+      'NUMBER': 'fa-sort-numeric-asc',
+      'FLOAT': 'fa-sort-numeric-asc',
+      'DECIMAL': 'fa-sort-numeric-asc',
+      'SMALLINT': 'fa-sort-numeric-asc',
+      'DOUBLE': 'fa-sort-numeric-asc',
+      'DEC': 'fa-sort-numeric-asc',
+      'MEDIUMINT': 'fa-sort-numeric-asc',
+      'BOOL': 'fa-sort-numeric-asc',
+      'BOOLEAN': 'fa-sort-numeric-asc',
+      'INT': 'fa-sort-numeric-asc',
+
+      // first letter uppercase and rest to lowercase 
+      'Date': 'fa-calendar-o',
+      'Datetime': 'fa-calendar-o',
+      'Timestamp': 'fa-calendar-o',
+      'Time': 'fa-calendar-o',
+      'Year': 'fa-calendar-o',
+
+      'Varchar': 'fa-sort-alpha-asc',
+      'Char': 'fa-sort-alpha-asc',
+      'Binary': 'fa-sort-alpha-asc',
+      'Varbinary': 'fa-sort-alpha-asc',
+      'Tinyblob': 'fa-sort-alpha-asc',
+      'Tinytext': 'fa-sort-alpha-asc',
+      'Text': 'fa-sort-alpha-asc',
+      'Blob': 'fa-sort-alpha-asc',
+      'Mediumtext': 'fa-sort-alpha-asc',
+      'Longtext': 'fa-sort-alpha-asc',
+      'Longblob': 'fa-sort-alpha-asc',
+      'Enum': 'fa-sort-alpha-asc',
+      'Set': 'fa-sort-alpha-asc',
+
+      'Bigint': 'fa-sort-numeric-asc',
+      'Integer': 'fa-sort-numeric-asc',
+      'Number': 'fa-sort-numeric-asc',
+      'Float': 'fa-sort-numeric-asc',
+      'Decimal': 'fa-sort-numeric-asc',
+      'Smallint': 'fa-sort-numeric-asc',
+      'Double': 'fa-sort-numeric-asc',
+      'Dec': 'fa-sort-numeric-asc',
+      'Mediumint': 'fa-sort-numeric-asc',
+      'Bool': 'fa-sort-numeric-asc',
+      'Boolean': 'fa-sort-numeric-asc',
+      'Int': 'fa-sort-numeric-asc',
+
+      // For mongodb
+      'String': 'fa-sort-alpha-asc',
+      'Integer': 'fa-sort-numeric-asc',
+      'Double': 'fa-sort-numeric-asc',
+      'Boolean': 'fa-sort-numeric-asc',
+      'Date': 'fa-calendar-o',
+      'Array': 'fa-sort-alpha-asc',
+      'Object': 'fa-sort-alpha-asc',
+      'ObjectId': 'fa-sort-alpha-asc',
+      'Binary Data': 'fa-sort-alpha-asc',
+      'Undefined': 'fa-sort-alpha-asc',
+      'Null': 'fa-sort-alpha-asc',
+      'RegularExpression': 'fa-sort-alpha-asc'
+
+    };
+
+    return typeIcons[type] || 'fa-regular fa-circle'; // Default icon if type is not specified
+  }
+
+
+  // Create a container for all clusters
+  const clustersContainer = document.createElement('div');
+    clustersContainer.classList.add('clusters-container');
+
+    // Iterate over keys in jsonData
+    for (const key in jsonData) {
+      if (jsonData.hasOwnProperty(key)) {
+        const bgColorClass = key.toLowerCase() === 'snowflakes' ? 'snowflakes-bg' : 'aws-bg';
+        clustersContainer.innerHTML += generateHTML({ [key]: jsonData[key] }, 'first-container', bgColorClass);
+      }
+    }
+
+    // Append the clusters container to the "clusters" div
+    document.getElementById('clusters').appendChild(clustersContainer);
+
+    // Add event listeners after updating the DOM
+    document.querySelectorAll('.cl-item:not(.cl-item-no-sub)').forEach(item => {
+      const title = item.querySelector('.cl-label-title');
+      const depth = getParentDepth(item);
+
+      // Set default open state for first-depth items
+      if (depth <= 0) {
+        item.classList.add('cl-item-open');
+      }
+
+      title.addEventListener('click', () => {
+        // Toggle the class only if the depth is greater than 1
+        if (depth > 0) {
+          item.classList.toggle('cl-item-open');
+        }
+      });
+    });
+
+    function getParentDepth(element) {
+      let depth = 0;
+      while (element) {
+        if (element.classList.contains('cl-item')) {
+          depth++;
+        }
+        element = element.parentElement;
+      }
+      return depth;
+    }
+
+    
+
+</script>
+
+
+
+</html>
